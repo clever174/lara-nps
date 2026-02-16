@@ -5,7 +5,7 @@ import { computed } from 'vue'
 import { GETCOURSE_URL } from '@/Utils/globals.js'
 
 const props = defineProps({
-    lessonGrades: Object,
+    employeeGrades: Object,
 })
 
 const page = usePage()
@@ -23,9 +23,9 @@ const sortOrder = computed(() => {
 
 const onPage = (event) => {
     router.get(
-        route('lesson-grades.list'),
+        route('employee-grades.list'),
         {
-            ...query.value,         // ✅ сохраняем course_id / lesson_id / rating / date_start / date_end
+            ...query.value,         // сохраняем course_id / lesson_id / rating / date_start / date_end
             page: event.page + 1,   // 0-based -> 1-based
             per_page: event.rows,
         },
@@ -39,7 +39,7 @@ const onPage = (event) => {
 
 const onSort = (event) => {
     router.get(
-        route('lesson-grades.list'),
+        route('employee-grades.list'),
         {
             ...query.value, // ✅ сохраняем фильтры
             page: 1,
@@ -61,28 +61,25 @@ const onSort = (event) => {
     <AuthenticatedLayout>
         <div class="py-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="bg-white rounded-lg shadow p-4">
-                <h2 v-if="query.course_id" class="font-bold">
-                    Курс: {{ lessonGrades.data[0]?.course_title }}
-                </h2>
-                <h2 v-else class="font-bold">
-                    Урок: {{ lessonGrades.data[0]?.lesson_title }}
+                <h2 class="font-bold">
+                    {{ employeeGrades.data[0]?.employee_name }}
                 </h2>
             </div>
 
             <div class="py-4">
-                <div v-if="lessonGrades.data?.length === 0" class="text-gray-600">
+                <div v-if="employeeGrades.data?.length === 0" class="text-gray-600">
                     Записей пока нет
                 </div>
 
                 <div v-else class="bg-white rounded-lg p-1">
                     <DataTable
-                        :value="lessonGrades.data"
+                        :value="employeeGrades.data"
                         tableStyle="min-width: 50rem"
                         lazy
                         paginator
-                        :rows="lessonGrades.per_page"
-                        :totalRecords="lessonGrades.total"
-                        :first="(lessonGrades.current_page - 1) * lessonGrades.per_page"
+                        :rows="employeeGrades.per_page"
+                        :totalRecords="employeeGrades.total"
+                        :first="(employeeGrades.current_page - 1) * employeeGrades.per_page"
                         :rowsPerPageOptions="[10, 20, 50, 100]"
                         @page="onPage"
                         @sort="onSort"
@@ -119,17 +116,6 @@ const onSort = (event) => {
                             <template #body="{ data }">
                                 <div class="w-full">
                                     {{ data.course_title }}
-                                </div>
-                            </template>
-                        </Column>
-
-                        <Column field="lesson_title" sortable style="width: 20%">
-                            <template #header>
-                                <span class="flex-1 text-center font-bold">Урок</span>
-                            </template>
-                            <template #body="{ data }">
-                                <div class="w-full">
-                                    {{ data.lesson_title }}
                                 </div>
                             </template>
                         </Column>

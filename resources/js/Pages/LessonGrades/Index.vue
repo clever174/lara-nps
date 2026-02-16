@@ -36,7 +36,7 @@ function getDetailsRoute(node) {
 </script>
 
 <template>
-    <Head title="Уроки" />
+    <Head title="Оценка уроков" />
 
     <AuthenticatedLayout>
         <div class="py-4 mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-4">
@@ -53,8 +53,6 @@ function getDetailsRoute(node) {
                     :value="courseData"
                     expander
                     tableStyle="min-width: 50rem"
-                    scrollable
-                    :scrollHeight="'calc(100vh - 260px)'"
                 >
                     <Column expander style="width: 35%">
                         <template #header>

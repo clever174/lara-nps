@@ -53,6 +53,13 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Оценка сотрудников
                                 </NavLink>
+
+                                <NavLink
+                                    :href="route('mi.list')"
+                                    :active="route().current('mi.list')"
+                                >
+                                    Мастер ИИ
+                                </NavLink>
                             </div>
                         </div>
 

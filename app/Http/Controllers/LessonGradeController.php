@@ -14,7 +14,7 @@ class LessonGradeController extends Controller
 {
     public function index(Request $request, Analytics $analytics, DateRangeResolver $dates): Response
     {
-        [$dateStart, $dateEnd] = $dates->resolve($request);
+        [$dateStart, $dateEnd] = $dates->resolve($request, 'month');
 
         return Inertia::render('LessonGrades/Index', [
             'filters' => [
