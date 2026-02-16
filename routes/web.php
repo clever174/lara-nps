@@ -2,11 +2,10 @@
 
 use App\Http\Controllers\EmployeeGradeController;
 use App\Http\Controllers\LessonGradeController;
+use App\Http\Controllers\Mi\StudentController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
 
 
 Route::get('/', function () {
@@ -29,8 +28,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/employee-grades', [EmployeeGradeController::class, 'index'])->name('employee-grades.index');
     Route::get('/employee-grades/list', [EmployeeGradeController::class, 'list'])->name('employee-grades.list');
 
-    Route::get('/mi/list', [EmployeeGradeController::class, 'list'])->name('mi.list');
+    Route::prefix('mi')->name('mi.')->group(function () {
+        Route::get('/students', [StudentController::class, 'index'])
+            ->name('students.index');
 
+        Route::get('/students/{student}', [StudentController::class, 'show'])
+            ->name('students.show');
+    });
 });
 
 require __DIR__.'/auth.php';

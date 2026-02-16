@@ -55,8 +55,8 @@ const showingNavigationDropdown = ref(false);
                                 </NavLink>
 
                                 <NavLink
-                                    :href="route('mi.list')"
-                                    :active="route().current('mi.list')"
+                                    :href="route('mi.students.index')"
+                                    :active="route().current('mi.students.index')"
                                 >
                                     Мастер ИИ
                                 </NavLink>
