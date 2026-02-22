@@ -34,6 +34,33 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'navs' => $this->navs()
+        ];
+    }
+
+    private function navs(): array
+    {
+        return [
+            [
+                'title' => 'Главная',
+                'route' => 'dashboard',
+            ],
+            [
+                'title' => 'Оценка уроков',
+                'route' => 'lesson-grades.index',
+            ],
+            [
+                'title' => 'Оценка сотрудников',
+                'route' => 'employee-grades.index',
+            ],
+            [
+                'title' => 'Мастер ИИ',
+                'route' => 'mi.students.index',
+            ],
+            [
+                'title' => 'Попытки',
+                'route' => 'mi.students.stats',
+            ],
         ];
     }
 }

@@ -1,13 +1,17 @@
 <script setup>
 import { ref } from 'vue';
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3'
 
 const showingNavigationDropdown = ref(false);
+
+const page = usePage()
+const navs = page.props.navs
+
+
 </script>
 
 <template>
@@ -30,42 +34,14 @@ const showingNavigationDropdown = ref(false);
 <!--                            </div>-->
 
                             <!-- Navigation Links -->
-                            <div
-                                class="hidden space-x-8 sm:-my-px sm:flex"
-                            >
+                            <div class="hidden space-x-8 sm:-my-px sm:flex">
                                 <NavLink
-                                    :href="route('dashboard')"
-                                    :active="route().current('dashboard')"
+                                    v-for="nav in navs"
+                                    :key="nav.route"
+                                    :href="route(nav.route)"
+                                    :active="route().current(nav.route)"
                                 >
-                                    Главная
-                                </NavLink>
-
-                                <NavLink
-                                    :href="route('lesson-grades.index')"
-                                    :active="route().current('lesson-grades.index')"
-                                >
-                                    Оценка уроков
-                                </NavLink>
-
-                                <NavLink
-                                    :href="route('employee-grades.index')"
-                                    :active="route().current('employee-grades.index')"
-                                >
-                                    Оценка сотрудников
-                                </NavLink>
-
-                                <NavLink
-                                    :href="route('mi.students.index')"
-                                    :active="route().current('mi.students.index')"
-                                >
-                                    Мастер ИИ
-                                </NavLink>
-
-                                <NavLink
-                                    :href="route('mi.students.stats')"
-                                    :active="route().current('mi.students.stats')"
-                                >
-                                    Попытки
+                                    {{ nav.title }}
                                 </NavLink>
                             </div>
                         </div>
