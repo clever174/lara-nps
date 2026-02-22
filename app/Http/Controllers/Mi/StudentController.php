@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Mi;
 use App\Http\Controllers\Controller;
 use App\Models\Mi\Student;
 use App\Services\Mi\ListQuery;
+use App\Services\Mi\StudentStat;
 use Inertia\Inertia;
 use Inertia\Response;
+//use App\Services\Mi\StudentStat;
+use App\Support\DateRangeResolver;
+use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
@@ -30,7 +34,7 @@ class StudentController extends Controller
         ]);
     }
 
-    public function show(\App\Models\Mi\Student $student): \Inertia\Response
+    public function show(Student $student): \Inertia\Response
     {
         // Студент из списка у тебя был с grade_count/avg_grade.
         // В карточке посчитаем тоже — чтобы не зависеть от списка.
@@ -101,6 +105,19 @@ class StudentController extends Controller
         }
 
         return [$value];
+    }
+
+    public function stats(Request $request, StudentStat $stat, DateRangeResolver $dates): Response
+    {
+        [$dateStart, $dateEnd] = $dates->resolve($request, 'month');
+
+        return Inertia::render('Mi/Students/Stats', [
+            'filters' => [
+                'date_start' => $dateStart,
+                'date_end'   => $dateEnd,
+            ],
+            'stats' => $stat->attemptsTable($dateStart, $dateEnd),
+        ]);
     }
 
 }

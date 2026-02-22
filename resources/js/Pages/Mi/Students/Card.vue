@@ -56,10 +56,10 @@ function toggleExpandAll() {
     <AuthenticatedLayout>
         <Head :title="`MI — ${student.fio}`" />
 
-        <div class="max-w-6xl mx-auto p-4 md:p-6 space-y-4">
+        <div class="py-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
 
             <!-- Header -->
-            <div class="bg-white rounded-2xl shadow-sm p-4 md:p-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div class="mb-4 bg-white rounded-2xl shadow-sm p-4 md:p-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center gap-3">
                         <Link

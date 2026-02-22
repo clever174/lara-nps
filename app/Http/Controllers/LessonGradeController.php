@@ -27,6 +27,7 @@ class LessonGradeController extends Controller
 
     public function list(ListQuery $listQuery): Response
     {
+        var_dump("teees");
         return Inertia::render('LessonGrades/List', [
             'lessonGrades' => $listQuery->paginate(),
             'filters' => request()->only([

@@ -1,12 +1,16 @@
-<!-- resources/js/Pages/Students/Stats.vue -->
+<!-- resources/js/Pages/Mi/Students/Stats.vue -->
 <script setup>
-import { Head } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import { Head } from '@inertiajs/vue3'
 import DateRangeFilter from '@/Components/Core/DateRangeFilter.vue'
 
+// PrimeVue
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+
 const props = defineProps({
-    filters: Object, // { date_start, date_end }
-    stats: Array,    // [{ attempt, qty, avg }]
+    stats: Array,   // [{ attempt, qty, avg }]
+    filters: Object // { date_start, date_end }
 })
 
 function fmtAvg(v) {
@@ -19,33 +23,54 @@ function fmtAvg(v) {
     <Head title="Статистика попыток" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-xl font-semibold leading-tight">
-                Статистика попыток
-            </h2>
-        </template>
-
-        <div class="py-6 space-y-4">
-            <!-- только фильтр (он меняет query date_start/date_end) -->
+        <div class="py-4 mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-4">
+            <!-- Фильтр дат (snake_case) -->
             <DateRangeFilter
-                :filters="filters"
-                route-name="students.stats"
+                routeName="mi.students.stats"
+                :date_start="filters?.date_start"
+                :date_end="filters?.date_end"
             />
 
-            <div class="bg-white shadow-sm rounded-2xl p-4">
+            <!-- Таблица (только вывод, без server-side, без вычислений) -->
+            <div class="bg-white rounded-lg p-1">
                 <DataTable
                     :value="stats"
-                    dataKey="attempt"
+                    tableStyle="min-width: 40rem"
                     stripedRows
-                    showGridlines
                     responsiveLayout="scroll"
+                    dataKey="attempt"
                     :emptyMessage="'Нет данных за выбранный период'"
                 >
-                    <Column field="attempt" header="№ попытки" style="width: 140px" />
-                    <Column field="qty" header="Количество" style="width: 160px" />
-                    <Column field="avg" header="Средняя оценка">
+                    <Column field="attempt" style="width: 33%">
+                        <template #header>
+                            <span class="flex-1 text-center font-bold">№ попытки</span>
+                        </template>
                         <template #body="{ data }">
-                            {{ fmtAvg(data.avg) }}
+                            <div class="w-full text-center font-semibold">
+                                {{ data.attempt }}
+                            </div>
+                        </template>
+                    </Column>
+
+                    <Column field="qty" style="width: 33%">
+                        <template #header>
+                            <span class="flex-1 text-center font-bold">Количество</span>
+                        </template>
+                        <template #body="{ data }">
+                            <div class="w-full text-center">
+                                {{ data.qty }}
+                            </div>
+                        </template>
+                    </Column>
+
+                    <Column field="avg" style="width: 33%">
+                        <template #header>
+                            <span class="flex-1 text-center font-bold">Средняя оценка</span>
+                        </template>
+                        <template #body="{ data }">
+                            <div class="w-full text-center">
+                                {{ fmtAvg(data.avg) }}
+                            </div>
                         </template>
                     </Column>
                 </DataTable>

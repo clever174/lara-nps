@@ -60,6 +60,13 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Мастер ИИ
                                 </NavLink>
+
+                                <NavLink
+                                    :href="route('mi.students.stats')"
+                                    :active="route().current('mi.students.stats')"
+                                >
+                                    Попытки
+                                </NavLink>
                             </div>
                         </div>
 
