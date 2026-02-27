@@ -14,7 +14,7 @@ class ListQuery
 
         $query = Student::query()
             ->from('mi_student as s')
-            ->join('mi_student_result as sr', function ($join) {
+            ->leftJoin('mi_student_result as sr', function ($join) {
                 $join->on('sr.student_id', '=', 's.id')
                     ->where('sr.is_actual', 1)
                     ->where('sr.feedback_grade', '>', 0);

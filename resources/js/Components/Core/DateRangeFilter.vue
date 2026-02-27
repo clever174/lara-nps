@@ -61,14 +61,9 @@ function doReset() {
     start.value = null
     end.value = null
 
-    const payload = clean({
-        ...props.extraQuery,
-        page: 1,
-    })
-
-    router.get(route(props.routeName), payload, {
-        preserveState: props.preserveState,
-        replace: props.replace,
+    router.get(route(props.routeName), {}, {
+        preserveState: false,   // полностью сбросить состояние
+        replace: false,         // новая запись в history
     })
 
     emit('reset')

@@ -145,10 +145,12 @@ const navs = page.props.navs
                 >
                     <div class="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
-                            :href="route('dashboard')"
-                            :active="route().current('dashboard')"
+                            v-for="nav in navs"
+                            :key="nav.route"
+                            :href="route(nav.route)"
+                            :active="route().current(nav.route)"
                         >
-                            Dashboard
+                            {{ nav.title }}
                         </ResponsiveNavLink>
                     </div>
 
