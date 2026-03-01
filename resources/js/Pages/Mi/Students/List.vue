@@ -74,7 +74,7 @@ const onSort = (event) => {
                 <div v-else class="bg-white rounded-lg p-1">
                     <DataTable
                         :value="students.data"
-                        tableStyle="min-width: 50rem"
+                        tableStyle=""
                         lazy
                         paginator
                         :rows="students.per_page"

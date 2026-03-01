@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeGradeController;
 use App\Http\Controllers\LessonGradeController;
 use App\Http\Controllers\Mi\StudentController;
@@ -8,12 +9,13 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
-Route::get('/', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+//Route::get('/', function () {
+//    return Inertia::render('Dashboard');
+//})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () { return Inertia::render('Dashboard'); });
+
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -32,8 +34,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/students', [StudentController::class, 'index'])->name('students.index');
         Route::get('/students/stats', [StudentController::class, 'stats'])->name('students.stats');
         Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
-
     });
+
+
 });
 
 require __DIR__.'/auth.php';

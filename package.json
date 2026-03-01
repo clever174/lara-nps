@@ -23,6 +23,7 @@
     "dependencies": {
         "@primeuix/themes": "^2.0.3",
         "@primevue/auto-import-resolver": "^4.5.4",
+        "chart.js": "^4.5.1",
         "primeicons": "^7.0.0",
         "primevue": "^4.5.4",
         "unplugin-vue-components": "^31.0.0"

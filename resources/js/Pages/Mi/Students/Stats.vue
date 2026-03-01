@@ -35,7 +35,7 @@ function fmtAvg(v) {
             <div class="bg-white rounded-lg p-1">
                 <DataTable
                     :value="stats"
-                    tableStyle="min-width: 40rem"
+                    tableStyle=""
                     stripedRows
                     responsiveLayout="scroll"
                     dataKey="attempt"
