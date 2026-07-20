@@ -109,6 +109,8 @@ it('retries on a 503 before succeeding', function () {
 });
 
 it('throws AiException on connection failure', function () {
+    Sleep::fake();
+
     Http::fake([
         'llm.api.cloud.yandex.net/*' => fn () => throw new \Illuminate\Http\Client\ConnectionException('Connection refused'),
     ]);
