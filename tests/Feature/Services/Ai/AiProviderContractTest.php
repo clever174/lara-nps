@@ -13,7 +13,7 @@ dataset('ai_providers', [
         fn (string $text) => ['result' => ['alternatives' => [['message' => ['text' => $text]]]]],
     ],
     'proxyapi' => [
-        fn () => new ProxyApiProvider(apiKey: 'k', defaultModel: 'gpt-4o-mini'),
+        fn () => new ProxyApiProvider(apiKey: 'k', defaultModel: 'gpt-4o-mini', defaultAudioModel: 'gemini-3.5-flash'),
         'api.proxyapi.ru/*',
         fn (string $text) => ['choices' => [['message' => ['content' => $text]]]],
     ],

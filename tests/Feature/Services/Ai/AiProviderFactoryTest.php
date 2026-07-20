@@ -41,9 +41,22 @@ it('resolves the proxyapi provider when configured', function () {
     Config::set('ai.providers.proxyapi', [
         'api_key' => 'test-key',
         'model' => 'gpt-4o-mini',
+        'audio_model' => 'gemini-3.5-flash',
     ]);
 
     $provider = (new AiProviderFactory())->make();
 
     expect($provider)->toBeInstanceOf(\App\Services\Ai\Providers\ProxyApiProvider::class);
+});
+
+it('resolves ProxyApiProvider directly via the container regardless of AI_PROVIDER', function () {
+    Config::set('ai.provider', 'yandex');
+    Config::set('ai.providers.proxyapi', [
+        'api_key' => 'test-key',
+        'model' => 'gpt-4o-mini',
+        'audio_model' => 'gemini-3.5-flash',
+    ]);
+
+    expect(app(\App\Services\Ai\Providers\ProxyApiProvider::class))
+        ->toBeInstanceOf(\App\Services\Ai\Providers\ProxyApiProvider::class);
 });

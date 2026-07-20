@@ -13,6 +13,7 @@ return [
         'proxyapi' => [
             'api_key' => env('PROXYAPI_AI_API_KEY'),
             'model' => env('PROXYAPI_AI_MODEL', 'gpt-4o-mini'),
+            'audio_model' => env('PROXYAPI_AUDIO_MODEL', 'gemini-3.5-flash'),
         ],
     ],
 ];

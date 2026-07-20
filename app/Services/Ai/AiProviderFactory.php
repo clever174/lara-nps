@@ -20,6 +20,7 @@ class AiProviderFactory
             'proxyapi' => new ProxyApiProvider(
                 apiKey: config('ai.providers.proxyapi.api_key'),
                 defaultModel: config('ai.providers.proxyapi.model'),
+                defaultAudioModel: config('ai.providers.proxyapi.audio_model'),
             ),
             default => throw new InvalidArgumentException(
                 'Unknown AI provider ['.config('ai.provider').']'
