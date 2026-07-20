@@ -91,3 +91,46 @@ it('creates the record even if the AI call fails, leaving ai_json null', functio
     expect($audioGrade)->not->toBeNull()
         ->and($audioGrade->ai_json)->toBeNull();
 });
+
+it('throws and does not create a record when file download returns 4xx/5xx', function () {
+    Http::fake([
+        'fs18.getcourse.ru/*' => Http::response('Not Found', 404),
+    ]);
+
+    expect(fn () => makeAudioGradeService()->handle([
+        'user_id' => 42,
+        'fio' => 'Иванов Иван',
+        'attempt_number' => 1,
+        'file_path' => '<a href="https://fs18.getcourse.ru/fileservice/file/download/a/1/h/expired.wav">Скачать</a>',
+    ]))->toThrow(\Illuminate\Http\Client\RequestException::class);
+
+    expect(AudioGrade::count())->toBe(0);
+});
+
+it('falls back to extension guessing when Content-Type is application/octet-stream', function () {
+    Http::fake([
+        'fs18.getcourse.ru/*' => Http::response('fake-audio-bytes', 200, ['Content-Type' => 'application/octet-stream']),
+        'api.proxyapi.ru/google/*' => Http::response([
+            'candidates' => [
+                ['content' => ['parts' => [['text' => 'Analysis result']]]],
+            ],
+        ], 200),
+    ]);
+
+    $audioGrade = makeAudioGradeService()->handle([
+        'user_id' => 42,
+        'fio' => 'Иванов Иван',
+        'attempt_number' => 1,
+        'file_path' => '<a href="https://fs18.getcourse.ru/fileservice/file/download/a/950796/sc/3/h/403b9535d906f31466f2cf25a863a264.wav">Скачать</a>',
+    ]);
+
+    expect($audioGrade)->toBeInstanceOf(AudioGrade::class);
+
+    Http::assertSent(function ($request) {
+        if (! str_contains($request->url(), 'proxyapi.ru')) {
+            return false;
+        }
+
+        return $request['contents'][0]['parts'][1]['inline_data']['mime_type'] === 'audio/wav';
+    });
+});

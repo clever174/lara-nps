@@ -20,9 +20,12 @@ class AudioGradeService
     {
         $url = $this->extractFileUrl($data['file_path']);
 
-        $fileResponse = Http::get($url);
+        $fileResponse = Http::timeout(20)->get($url)->throw();
         $audioData = $fileResponse->body();
-        $mimeType = $fileResponse->header('Content-Type') ?: $this->guessMimeTypeFromUrl($url);
+        $contentType = $fileResponse->header('Content-Type');
+        $mimeType = ($contentType && $contentType !== 'application/octet-stream')
+            ? $contentType
+            : $this->guessMimeTypeFromUrl($url);
 
         $audioGrade = AudioGrade::create([
             'user_id' => $data['user_id'],
