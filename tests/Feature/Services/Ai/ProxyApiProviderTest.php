@@ -90,7 +90,7 @@ it('throws AiException with a truncated, non-message-embedded body on a failed r
         expect($e->getMessage())->toBe('ProxyAPI API request failed with status 400')
             ->and($e->getMessage())->not->toContain('xxx')
             ->and($e->statusCode())->toBe(400)
-            ->and(strlen($e->context()))->toBeLessThanOrEqual(300);
+            ->and(strlen($e->truncatedBody()))->toBeLessThanOrEqual(300);
     }
 });
 
@@ -192,7 +192,7 @@ it('throws AiException on a failed audio analysis response', function () {
     } catch (AiException $e) {
         expect($e->getMessage())->toBe('ProxyAPI API request failed with status 400')
             ->and($e->statusCode())->toBe(400)
-            ->and(strlen($e->context()))->toBeLessThanOrEqual(300);
+            ->and(strlen($e->truncatedBody()))->toBeLessThanOrEqual(300);
     }
 });
 
