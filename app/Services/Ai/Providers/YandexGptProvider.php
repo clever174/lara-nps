@@ -4,6 +4,7 @@ namespace App\Services\Ai\Providers;
 
 use App\Services\Ai\Contracts\AiProvider;
 use App\Services\Ai\Exceptions\AiException;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -25,22 +26,30 @@ class YandexGptProvider implements AiProvider
     {
         $startedAt = microtime(true);
 
-        $response = Http::withHeaders([
-            'Authorization' => "Api-Key {$this->apiKey}",
-        ])
-            ->timeout(60)
-            ->retry(3, 200, throw: false)
-            ->post(self::ENDPOINT, [
-                'modelUri' => "gpt://{$this->folderId}/{$this->model}",
-                'completionOptions' => [
-                    'stream' => false,
-                    'temperature' => $options['temperature'] ?? self::DEFAULT_TEMPERATURE,
-                    'maxTokens' => (string) ($options['max_tokens'] ?? self::DEFAULT_MAX_TOKENS),
-                ],
-                'messages' => [
-                    ['role' => 'user', 'text' => $prompt],
-                ],
-            ]);
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => "Api-Key {$this->apiKey}",
+            ])
+                ->timeout(60)
+                ->retry(3, 200, throw: false)
+                ->post(self::ENDPOINT, [
+                    'modelUri' => "gpt://{$this->folderId}/{$this->model}",
+                    'completionOptions' => [
+                        'stream' => false,
+                        'temperature' => $options['temperature'] ?? self::DEFAULT_TEMPERATURE,
+                        'maxTokens' => (string) ($options['max_tokens'] ?? self::DEFAULT_MAX_TOKENS),
+                    ],
+                    'messages' => [
+                        ['role' => 'user', 'text' => $prompt],
+                    ],
+                ]);
+        } catch (ConnectionException $e) {
+            throw new AiException(
+                'Yandex API request failed: connection error',
+                0,
+                substr($e->getMessage(), 0, self::TRUNCATED_BODY_LENGTH),
+            );
+        }
 
         $durationMs = (int) round((microtime(true) - $startedAt) * 1000);
 

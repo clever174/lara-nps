@@ -74,6 +74,8 @@ it('applies temperature and max_tokens overrides from options', function () {
 });
 
 it('throws AiException with a truncated, non-message-embedded body on a failed response', function () {
+    Sleep::fake();
+
     Http::fake([
         'llm.api.cloud.yandex.net/*' => Http::response(['error' => str_repeat('x', 1000)], 400),
     ]);
@@ -104,4 +106,18 @@ it('retries on a 503 before succeeding', function () {
 
     expect($result)->toBe('ok after retry');
     Http::assertSentCount(2);
+});
+
+it('throws AiException on connection failure', function () {
+    Http::fake([
+        'llm.api.cloud.yandex.net/*' => fn () => throw new \Illuminate\Http\Client\ConnectionException('Connection refused'),
+    ]);
+
+    try {
+        makeYandexProvider()->complete('Say hello');
+        $this->fail('Expected AiException to be thrown');
+    } catch (AiException $e) {
+        expect($e->getMessage())->toBe('Yandex API request failed: connection error')
+            ->and($e->statusCode())->toBe(0);
+    }
 });
