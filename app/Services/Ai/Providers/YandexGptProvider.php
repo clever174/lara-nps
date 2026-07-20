@@ -4,12 +4,13 @@ namespace App\Services\Ai\Providers;
 
 use App\Services\Ai\Contracts\AiProvider;
 use App\Services\Ai\Exceptions\AiException;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\Http;
+use App\Services\Ai\Providers\Concerns\MakesAiHttpRequests;
 use Illuminate\Support\Facades\Log;
 
 class YandexGptProvider implements AiProvider
 {
+    use MakesAiHttpRequests;
+
     private const ENDPOINT = 'https://llm.api.cloud.yandex.net/foundationModels/v1/completion';
     private const DEFAULT_TEMPERATURE = 0.6;
     private const DEFAULT_MAX_TOKENS = 2000;
@@ -26,40 +27,23 @@ class YandexGptProvider implements AiProvider
     {
         $startedAt = microtime(true);
 
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => "Api-Key {$this->apiKey}",
-            ])
-                ->timeout(60)
-                ->retry(3, 200, throw: false)
-                ->post(self::ENDPOINT, [
-                    'modelUri' => "gpt://{$this->folderId}/{$this->model}",
-                    'completionOptions' => [
-                        'stream' => false,
-                        'temperature' => $options['temperature'] ?? self::DEFAULT_TEMPERATURE,
-                        'maxTokens' => (string) ($options['max_tokens'] ?? self::DEFAULT_MAX_TOKENS),
-                    ],
-                    'messages' => [
-                        ['role' => 'user', 'text' => $prompt],
-                    ],
-                ]);
-        } catch (ConnectionException $e) {
-            throw new AiException(
-                'Yandex API request failed: connection error',
-                0,
-                substr($e->getMessage(), 0, self::TRUNCATED_BODY_LENGTH),
-            );
-        }
+        $response = $this->postWithRetry(
+            self::ENDPOINT,
+            ['Authorization' => "Api-Key {$this->apiKey}"],
+            [
+                'modelUri' => "gpt://{$this->folderId}/{$this->model}",
+                'completionOptions' => [
+                    'stream' => false,
+                    'temperature' => $options['temperature'] ?? self::DEFAULT_TEMPERATURE,
+                    'maxTokens' => (string) ($options['max_tokens'] ?? self::DEFAULT_MAX_TOKENS),
+                ],
+                'messages' => [
+                    ['role' => 'user', 'text' => $prompt],
+                ],
+            ],
+        );
 
         $durationMs = (int) round((microtime(true) - $startedAt) * 1000);
-
-        if ($response->failed()) {
-            throw new AiException(
-                "Yandex API request failed with status {$response->status()}",
-                $response->status(),
-                substr($response->body(), 0, self::TRUNCATED_BODY_LENGTH),
-            );
-        }
 
         $text = data_get($response->json(), 'result.alternatives.0.message.text');
 
@@ -77,5 +61,10 @@ class YandexGptProvider implements AiProvider
         ]);
 
         return $text;
+    }
+
+    protected function providerName(): string
+    {
+        return 'Yandex';
     }
 }
