@@ -35,3 +35,15 @@ it('resolves AiProvider via the container binding', function () {
 
     expect(app(AiProvider::class))->toBeInstanceOf(YandexGptProvider::class);
 });
+
+it('resolves the proxyapi provider when configured', function () {
+    Config::set('ai.provider', 'proxyapi');
+    Config::set('ai.providers.proxyapi', [
+        'api_key' => 'test-key',
+        'model' => 'gpt-4o-mini',
+    ]);
+
+    $provider = (new AiProviderFactory())->make();
+
+    expect($provider)->toBeInstanceOf(\App\Services\Ai\Providers\ProxyApiProvider::class);
+});

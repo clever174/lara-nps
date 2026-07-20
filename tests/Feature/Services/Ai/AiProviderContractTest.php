@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\Ai\Exceptions\AiException;
+use App\Services\Ai\Providers\ProxyApiProvider;
 use App\Services\Ai\Providers\YandexGptProvider;
 use Illuminate\Support\Facades\Http;
 
@@ -9,6 +10,11 @@ dataset('ai_providers', [
         fn () => new YandexGptProvider(apiKey: 'k', folderId: 'f', model: 'm'),
         'llm.api.cloud.yandex.net/*',
         fn (string $text) => ['result' => ['alternatives' => [['message' => ['text' => $text]]]]],
+    ],
+    'proxyapi' => [
+        fn () => new ProxyApiProvider(apiKey: 'k', defaultModel: 'gpt-4o-mini'),
+        'api.proxyapi.ru/*',
+        fn (string $text) => ['choices' => [['message' => ['content' => $text]]]],
     ],
 ]);
 
