@@ -4,6 +4,7 @@ use App\Services\Ai\Exceptions\AiException;
 use App\Services\Ai\Providers\ProxyApiProvider;
 use App\Services\Ai\Providers\YandexGptProvider;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Sleep;
 
 dataset('ai_providers', [
     'yandex' => [
@@ -29,6 +30,8 @@ it('returns a non-empty string on a successful response', function (Closure $mak
 })->with('ai_providers');
 
 it('throws AiException on a failed response', function (Closure $makeProvider, string $urlPattern, Closure $successBody) {
+    Sleep::fake();
+
     Http::fake([
         $urlPattern => Http::response(['error' => 'boom'], 500),
     ]);
